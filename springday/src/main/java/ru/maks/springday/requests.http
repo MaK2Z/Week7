@@ -1,0 +1,34 @@
+GET http://localhost:8080/api/tasks
+
+###
+GET http://localhost:8080/api/tasks/2
+
+###
+GET http://localhost:8080/api/tasks?status=NEW
+
+###
+POST http://localhost:8080/api/tasks
+Content-Type: application/json
+
+{"title": "Прочитать про @RequestBody"}
+
+### Валидация: пустой title (ожидаем 400 VALIDATION_ERROR)
+POST http://localhost:8080/api/tasks
+Content-Type: application/json
+
+{"title": "", "priority": "HIGH"}
+
+### Валидация: нет priority (ожидаем 400 VALIDATION_ERROR)
+POST http://localhost:8080/api/tasks
+Content-Type: application/json
+
+{"title": "Нормальная задача"}
+
+### Валидация: всё хорошо (ожидаем 201)
+POST http://localhost:8080/api/tasks
+Content-Type: application/json
+
+{"title": "Купить молоко", "priority": "MEDIUM"}
+
+### Несуществующий id (ожидаем 404 TASK_NOT_FOUND)
+GET http://localhost:8080/api/tasks/99
