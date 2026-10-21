@@ -16,6 +16,12 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
+    @ExceptionHandler(StatusTransitionException.class)
+    public ResponseEntity<ApiError> handleStatusTransition(StatusTransitionException ex) {
+        ApiError error = new ApiError("STATUS_TRANSITION_INVALID", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()

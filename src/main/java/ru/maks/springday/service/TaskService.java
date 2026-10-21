@@ -3,6 +3,7 @@ package ru.maks.springday.service;
 import org.springframework.stereotype.Service;
 import ru.maks.springday.dto.CreateTaskRequest;
 import ru.maks.springday.dto.TaskResponse;
+import ru.maks.springday.exception.StatusTransitionException;
 import ru.maks.springday.exception.TaskNotFoundException;
 import ru.maks.springday.model.Task;
 import ru.maks.springday.model.TaskStatus;
@@ -62,6 +63,14 @@ public class TaskService {
         Task task = taskRepository.findById(id);
         if (task == null) {
             throw new TaskNotFoundException(id);
+        }
+        TaskStatus current = task.getStatus();
+        boolean allowed = (current == TaskStatus.NEW && status == TaskStatus.IN_PROGRESS)
+                || (current == TaskStatus.IN_PROGRESS && status == TaskStatus.DONE)
+                || (current == status);
+        if (!allowed) {
+            throw new StatusTransitionException(
+                    "Нельзя перевести задачу из статуса " + current + " в статус " + status);
         }
         task.setStatus(status);
         return toResponse(taskRepository.update(task));

@@ -4,6 +4,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.maks.springday.dto.CreateTaskRequest;
 import ru.maks.springday.dto.TaskResponse;
+import ru.maks.springday.dto.UpdateTaskStatusRequest;
 import ru.maks.springday.model.TaskStatus;
 import ru.maks.springday.service.TaskService;
 
@@ -21,12 +22,12 @@ public class TaskController {
     }
 
     @GetMapping
-    public List<TaskResponse> getAll(@RequestParam(required = false) TaskStatus status) {
+    public List<TaskResponse> getAll(@RequestParam(value = "status", required = false) TaskStatus status) {
         return taskService.getAll(status);
     }
 
     @GetMapping("/{id}")
-    public TaskResponse getById(@PathVariable int id) {
+    public TaskResponse getById(@PathVariable("id") int id) {
         return taskService.getById(id);
     }
 
@@ -38,13 +39,14 @@ public class TaskController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable int id) {
+    public ResponseEntity<Void> delete(@PathVariable("id") int id) {
         taskService.delete(id);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{id}/status")
-    public TaskResponse changeStatus(@PathVariable int id, @RequestParam TaskStatus status) {
-        return taskService.changeStatus(id, status);
+    public TaskResponse changeStatus(@PathVariable("id") int id,
+                                     @Valid @RequestBody UpdateTaskStatusRequest request) {
+        return taskService.changeStatus(id, request.getStatus());
     }
 }
